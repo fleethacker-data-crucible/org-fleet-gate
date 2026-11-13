@@ -1,0 +1,11 @@
+# fleet-gate security-relevant change detector (routes a PR to the Researcher).
+# Format: category<TAB>scope<TAB>.NET regex   (scope: path = changed file path, line = added line)
+auth	path	(?i)(?:^|[/_.-])(?:auth|login|logon|session|oauth|saml|sso|token|jwt)
+auth	line	(?i)\bAuthorization\b|\bBearer\s|\bOAuth|\bWWW-Authenticate\b|\bSet-Cookie\b|\bsession[_-]?token\b
+crypto	path	(?i)(?:^|[/_.-])(?:crypto|cipher|encrypt|decrypt|dpapi|hash|sign(?:ing)?|cert)
+crypto	line	(?i)System\.Security\.Cryptography|ProtectedData|\bAesGcm\b|\bAes(?:Managed|Cng)?\b|crypto\.subtle|\bRSACryptoServiceProvider\b|ConvertTo-SecureString|ConvertFrom-SecureString|X509Certificate
+listeners	path	(?i)(?:^|[/_.-])(?:server|listener|http|socket|serve)
+listeners	line	(?i)\bTcpListener\b|\bHttpListener\b|Bun\.serve|createServer\(|\.listen\(|\bWebSocket(?:Server)?\b|AcceptTcpClient|Prefixes\.Add
+secrets	path	(?i)(?:^|[/_.-])(?:secret|credential|cred|password|passwd|keyring|vault|\.env$)
+secrets	line	(?i)CredRead|CredWrite|CredentialManager|Get-StoredCredential|PasswordVault|\bSecureString\b|\bapi[_-]?key\b|\bclient[_-]?secret\b|GITHUB_TOKEN|\bpassword\s*[:=]
+file-access	line	(?i)\[(?:System\.)?IO\.(?:File|Directory)\]::(?:Write|Delete|Move|Copy|Create|AppendAll)|\bRemove-Item\b|\bSet-Content\b|\bOut-File\b|\bAdd-Content\b|\bNew-Item\b.*-ItemType\s+(?:SymbolicLink|Junction|HardLink)|\bfs\.(?:write|unlink|rm|rename|mkdir)|\bStart-Process\b|\bInvoke-Expression\b

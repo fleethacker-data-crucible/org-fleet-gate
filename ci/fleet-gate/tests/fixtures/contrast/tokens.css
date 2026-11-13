@@ -1,0 +1,7 @@
+/* Fixture modeled on the Fleet tokens: dark default, light by media query or data-theme. */
+:root, :root[data-theme='dark'] { --fl-bg: #071a26; --fl-sidebar: #0b2333; --fl-brass: #c9a66b; --fl-ink: #e8e2d0; }
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme='dark']) { --fl-bg: #fbfaf2; --fl-sidebar: #f3efe2; --fl-brass: #8a6b45; --fl-ink: #1d2a33; }
+}
+:root[data-theme='light'] { --fl-bg: #fbfaf2; --fl-sidebar: #f3efe2; --fl-brass: #8a6b45; --fl-ink: #1d2a33; }
+body { background: var(--fl-bg); color: var(--fl-ink); }

@@ -1,0 +1,40 @@
+# fleet-gate composite action: runs the org PR check in Windows PowerShell 5.1.
+# Used by .github/workflows/fleet-gate.yml via $/. MIT license.
+name: fleet-gate
+description: Org-wide PR gate (sensitive content, binaries, workflow safety, house rules, static contrast, Researcher routing)
+inputs:
+  repo-path:
+    description: Path of the checked-out repo to scan
+    default: '.'
+  base-sha:
+    description: Base commit; empty scans the whole repo
+    default: ''
+  skip-gitleaks:
+    description: Set to 'true' to skip gitleaks
+    default: 'false'
+outputs:
+  result:
+    description: PASS, WARN or FAIL
+    value: ${{ steps.gate.outputs.result }}
+  needs_researcher:
+    description: 'true when security-relevant code changed'
+    value: ${{ steps.gate.outputs.needs_researcher }}
+  security_categories:
+    description: Comma-separated categories that need a Researcher verdict
+    value: ${{ steps.gate.outputs.security_categories }}
+runs:
+  using: composite
+  steps:
+    - id: gate
+      shell: powershell
+      env:
+        FG_REPO: ${{ inputs.repo-path }}
+        FG_BASE: ${{ inputs.base-sha }}
+        FG_SKIP_GITLEAKS: ${{ inputs.skip-gitleaks }}
+        FG_ACTION_PATH: ${{ github.action_path }}
+      run: |
+        $ErrorActionPreference = 'Stop'
+        $p = @{ RepoPath = $env:FG_REPO; BaseSha = $env:FG_BASE }
+        if ($env:FG_SKIP_GITLEAKS -eq 'true') { $p.SkipGitleaks = $true }
+        & ([System.IO.Path]::Combine($env:FG_ACTION_PATH, 'Invoke-FleetGate.ps1')) @p
+        exit $LASTEXITCODE

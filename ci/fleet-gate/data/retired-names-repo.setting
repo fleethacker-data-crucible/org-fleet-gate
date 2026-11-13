@@ -1,0 +1,3 @@
+# Severity of the whole-repo retired-name scan (retired-names-repo): WARN or FAIL.
+# Added-line checks always FAIL. Flip this to FAIL once the repos are clean.
+WARN

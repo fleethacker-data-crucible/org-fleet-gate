@@ -1,0 +1,21 @@
+# fleet-gate retired tool names, checked in ADDED lines only.
+# Format: severity<TAB>.NET regex<TAB>what to write instead
+# Bracketed letters keep this file from matching itself. Database "ON DELETE/UPDATE ..."
+# clauses and lower-case geometry words (SVG/canvas arcs) are not flagged.
+FAIL	(?i)(?<!\bon\s+(?:delete|update)\s+)\bc[a]scade\b	use the tool's current name, or "previous name"
+FAIL	(?i)\bformerly\s+(?:known\s+as\s+|called\s+|named\s+)?a[r]c\b	use the tool's current name, or "previous name"
+FAIL	\bA[R]C\b	retired tool name; use the current name, or "previous name"
+FAIL	\bA[r]c\b(?![-_.]?(?:length|tangent|sine|cosine))	retired tool name; use the current name, or "previous name"
+# Retired names inside identifiers (env vars, function names, item names): word boundaries miss these.
+FAIL	(?<![A-Za-z])A[R]C_	retired name; remove it (no compatibility aliases)
+FAIL	_A[R]C(?![A-Za-z])	retired name; remove it (no compatibility aliases)
+FAIL	-A[r]c(?=[A-Z])	retired name; remove it (no compatibility aliases)
+FAIL	(?<![A-Za-z])A[r]c(?=[A-Z][a-z])(?!Tangent|Sine|Cosine|Length)	retired name; remove it (no compatibility aliases)
+FAIL	(?i)c[a]scade_	retired name; remove it (no compatibility aliases)
+FAIL	(?i)k[e]ystone_	retired name; remove it (no compatibility aliases)
+FAIL	(?i)g[e]nai_	retired name; remove it (no compatibility aliases)
+FAIL	(?i)\bg[e]napi\b	retired name; remove it (no compatibility aliases)
+FAIL	(?i)m[a]ilhawk	retired name; remove it (no compatibility aliases)
+FAIL	(?i)\bg[i]tmil\b	retired name; remove it (no compatibility aliases)
+FAIL	(?i)a[d]vana	retired name; remove it (no compatibility aliases)
+FAIL	(?i)legacy a[l]ias	retired name; remove it (no compatibility aliases)

@@ -1,0 +1,11 @@
+# fleet-gate sensitive-content patterns for ADDED lines (port of pr-gate check 6).
+# Format: kind<TAB>severity<TAB>.NET regex
+# Literal words are written with one bracketed letter (for example N[O]FORN) so this
+# file never matches its own patterns.
+mil-host	FAIL	(?i)(?<![a-z0-9._-])(?>(?=[0-9-]*[a-z])[a-z0-9-]+\.)+mil(?![a-z0-9_-])
+marking-controlled	FAIL	\bC[U]I\b|(?i:c[o]ntrolled unclassified information)
+marking-official-use	FAIL	\bF[O]UO\b|(?i:for [o]fficial use only)
+marking-class	FAIL	\b(?:T[O]P SECRET|S[E]CRET|C[O]NFIDENTIAL|U[N]CLASSIFIED|TS|S|C|U)//[A-Z]+|\b(?:N[O]FORN|O[R]CON|L[I]MDIS)\b|\bT[S]/SCI\b
+marking-distro	FAIL	(?i)\bD[I]STRIBUTION STATEMENT [B-F]\b
+export-control	WARN	\bI[T]AR\b|\bE[X]PORT[- ]CONTROLLED\b|\bE[A]R99\b
+private-ip	FAIL	(?<![\d.])(?:10\.\d{1,3}\.\d{1,3}\.\d{1,3}|172\.(?:1[6-9]|2\d|3[01])\.\d{1,3}\.\d{1,3}|192\.168\.\d{1,3}\.\d{1,3})(?:/\d{1,2})?(?![\d.]*\d)

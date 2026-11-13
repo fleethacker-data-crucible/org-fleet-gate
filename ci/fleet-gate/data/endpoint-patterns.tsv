@@ -1,0 +1,4 @@
+# fleet-gate full-repo default-endpoint patterns (every tracked text file, not just added lines).
+# Format: kind<TAB>severity<TAB>.NET regex. Outside test/fixture paths a match FAILs.
+mil-endpoint	FAIL	(?i)(?<![a-z0-9._-])(?>(?=[0-9-]*[a-z])[a-z0-9-]+\.)+mil(?![a-z0-9_-])
+service-branch-host	FAIL	(?i)(?<![a-z0-9._-])(?>[a-z0-9-]+\.)*(?=[a-z0-9-]*(?:n[a]vy|n[m]ci))[a-z0-9-]+\.(?:com|net|org|gov|us)(?![a-z0-9_-])

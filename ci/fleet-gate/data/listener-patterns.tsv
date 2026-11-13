@@ -1,0 +1,9 @@
+# fleet-gate listener binding rules, checked in every tracked code file.
+# Format: kind<TAB>severity<TAB>.NET regex<TAB>note
+# Standard: bind only to loopback (127.0.0.1 / localhost / IPAddress.Loopback).
+any-address	FAIL	(?i)IPAddress\]?\s*(?:::|\.)\s*(?:Any|IPv6Any)\b	binds every interface; use [System.Net.IPAddress]::Loopback
+wildcard-prefix	FAIL	(?i)https?://(?:\+|\*|0\.0\.0\.0|\[::\])(?::\d+|:\$|:\{)	HttpListener wildcard prefix; use http://127.0.0.1:<port>/ or http://localhost:<port>/
+zero-host	FAIL	(?i)(?:listen|serve|hostname|host|bind|address|ListenAddress|IPAddress\]?::Parse)\W{0,40}['"]0\.0\.0\.0['"]	listens on 0.0.0.0; use 127.0.0.1
+zero-host-arg	FAIL	(?i)\.listen\(\s*[^,()]+,\s*['"](?:0\.0\.0\.0|::)['"]	listens on every interface; pass '127.0.0.1'
+port-only-listen	FAIL	(?i)\b(?:server|app|srv|httpServer)\.listen\(\s*(?:\d+|[A-Za-z_$][\w$.]*)\s*(?:,\s*(?:\(|function|[A-Za-z_$][\w$]*\s*=>))?\s*\)?\s*;?\s*$	Node listen() with only a port binds every interface; pass '127.0.0.1' as the host
+tcplistener-port-only	WARN	(?i)TcpListener(?:\]::new|\s+-ArgumentList|\()\s*\(?\s*\$?[A-Za-z_]*port[A-Za-z_]*\s*\)	single-argument TcpListener(port) binds every interface; pass [IPAddress]::Loopback

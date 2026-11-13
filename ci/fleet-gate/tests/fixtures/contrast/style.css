@@ -1,0 +1,4 @@
+.sidebar { background: var(--fl-sidebar); }
+.eyebrow,.nav-label{font-size:12px;color:var(--fl-brass)}
+.ok { color: #000; background: #fff; }
+.mixed { color: var(--fl-ink); background: color-mix(in srgb, var(--fl-brass) 10%, transparent); }

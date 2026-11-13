@@ -1,0 +1,56 @@
+name: runs-on expressions
+on: pull_request
+permissions:
+  contents: read
+jobs:
+  # The crows-nest pattern: an Actions variable can move the job to self-hosted runners,
+  # and the literal fallback is a GitHub-hosted Linux runner.
+  vars-linux:
+    runs-on: ${{ vars.CROWS_NEST_RUNS_ON && fromJSON(vars.CROWS_NEST_RUNS_ON) || 'ubuntu-latest' }}
+    steps:
+      - name: Run
+        shell: bash
+        run: echo ok
+  vars-windows:
+    runs-on: ${{ vars.X_RUNS_ON && fromJSON(vars.X_RUNS_ON) || 'windows-latest' }}
+    steps:
+      - shell: bash
+        run: echo should fail
+  no-literals:
+    runs-on: ${{ fromJSON(vars.X_RUNS_ON) }}
+    steps:
+      - shell: bash
+        run: echo should fail
+  json-linux:
+    runs-on: ${{ fromJSON('["self-hosted", "Linux", "X64"]') }}
+    steps:
+      - shell: sh
+        run: echo ok
+  mixed:
+    runs-on: ${{ github.event_name == 'push' && 'ubuntu-latest' || 'windows-latest' }}
+    steps:
+      - shell: bash
+        run: echo should fail
+  matrix-runner:
+    strategy:
+      matrix:
+        runner: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.runner }}
+    steps:
+      - shell: bash
+        run: echo should fail
+  inputs-runner:
+    runs-on: ${{ inputs.runner }}
+    steps:
+      - shell: bash
+        run: echo should fail
+  inputs-fallback:
+    runs-on: ${{ inputs.runner || 'ubuntu-latest' }}
+    steps:
+      - shell: bash
+        run: echo ok
+  commented:
+    runs-on: ubuntu-latest # not a windows job
+    steps:
+      - shell: bash
+        run: echo ok
