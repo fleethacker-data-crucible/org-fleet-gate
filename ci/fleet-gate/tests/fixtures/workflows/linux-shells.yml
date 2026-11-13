@@ -1,0 +1,28 @@
+name: linux
+on: pull_request
+permissions:
+  contents: read
+jobs:
+  unit:
+    runs-on: ubuntu-26.04
+    steps:
+      - run: npm test
+      - shell: python
+        run: print('ok on linux')
+  docker:
+    runs-on: [self-hosted, linux, docker]
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - run: echo ok
+  matrix:
+    runs-on: ${{ matrix.os }}
+    steps:
+      - shell: python
+        run: print('unknown os')
+      - run: echo unknown
+  mac:
+    runs-on: macos-latest
+    steps:
+      - run: echo mac

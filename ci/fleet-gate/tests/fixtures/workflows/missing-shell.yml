@@ -1,0 +1,14 @@
+name: missing
+on: pull_request
+permissions:
+  contents: read
+jobs:
+  win:
+    runs-on: [self-hosted, Windows, X64]
+    steps:
+      - run: Write-Host no-shell
+  lin:
+    runs-on: ubuntu-latest
+    steps:
+      - shell: powershell
+        run: Write-Host wrong-os

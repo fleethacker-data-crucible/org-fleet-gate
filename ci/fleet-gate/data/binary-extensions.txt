@@ -1,0 +1,2 @@
+# fleet-gate binary/archive extensions that FAIL when added or modified (port of pr-gate check 7).
+zip tar tgz gz bz2 xz 7z rar zst cab wasm nupkg vsix exe dll msi msix appx jar war so dylib whl egg apk ipa deb rpm dmg iso img pkg bin onnx pt pth safetensors gguf ckpt h5 tflite pb

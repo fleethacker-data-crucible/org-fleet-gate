@@ -1,0 +1,11 @@
+name: risky
+on: pull_request_target
+jobs:
+  build:
+    runs-on: [self-hosted, windows, powershell51, headless]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+      - shell: powershell
+        run: Write-Host "${{ github.event.pull_request.title }}"

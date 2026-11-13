@@ -1,0 +1,15 @@
+# fleet-gate org default allowlist (applies to every repo).
+# A repo adds its own rules in .fleet-gate/allowlist.txt (same format).
+# One rule per line:   <kind>:<regex>     (.NET regex; case-sensitive unless (?i))
+#   path:<re>         repo file path (content, gitleaks, endpoint, listener, retired-name and
+#                     binary findings; for binary/large files a FAIL becomes a WARN)
+#   match:<re>        the matched text
+#   line:<re>         the whole line containing the match
+#   rule:<re>         gitleaks RuleID
+#   fingerprint:<re>  gitleaks Fingerprint (commit:file:rule:line)
+#   retired:<re>      repo file path, for retired-name findings only (nothing else is ignored)
+# Built-in ignores (no entry needed): matches that contain example/dummy/fake/sample/
+# placeholder/changeme/redacted/invalid/xxxx/lorem, and fake values on lines in
+# test/fixture paths. Every entry should say WHY and WHO approved it.
+
+# (no org-wide entries yet)

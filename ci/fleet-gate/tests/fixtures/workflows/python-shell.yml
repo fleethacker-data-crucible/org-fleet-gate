@@ -1,0 +1,11 @@
+name: prune
+on: workflow_dispatch
+permissions:
+  contents: write
+jobs:
+  prune:
+    runs-on: [self-hosted, Windows, X64]
+    steps:
+      - name: prune
+        shell: python
+        run: print('hi')

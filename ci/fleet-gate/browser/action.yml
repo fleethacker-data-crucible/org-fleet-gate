@@ -1,0 +1,24 @@
+# fleet-gate browser accessibility scan (axe-core + computed contrast in headless Edge/Chrome).
+# Runs only on the elevated win11 runner, behind the team guard in fleet-gate.yml. MIT license.
+name: fleet-gate-browser
+description: Browser accessibility scan driven over the DevTools protocol from Windows PowerShell 5.1
+inputs:
+  repo-path:
+    description: Path of the checked-out repo to scan
+    default: '.'
+runs:
+  using: composite
+  steps:
+    - shell: powershell
+      env:
+        FG_REPO: ${{ inputs.repo-path }}
+        FG_ACTION_PATH: ${{ github.action_path }}
+        FG_EVENT_NAME: ${{ github.event_name }}
+        FG_PR_AUTHOR: ${{ github.event.pull_request.user.login }}
+        FG_HEAD_REPO: ${{ github.event.pull_request.head.repo.full_name }}
+        FG_HEAD_OWNER: ${{ github.event.pull_request.head.repo.owner.login }}
+        FG_BASE_REPO: ${{ github.repository }}
+      run: |
+        $ErrorActionPreference = 'Stop'
+        & ([System.IO.Path]::Combine($env:FG_ACTION_PATH, 'Invoke-BrowserA11y.ps1')) -RepoPath $env:FG_REPO
+        exit $LASTEXITCODE

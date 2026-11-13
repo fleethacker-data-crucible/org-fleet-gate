@@ -1,0 +1,65 @@
+# fleet-gate: reusable org-wide PR check. Callers pin this file by commit SHA.
+# Scripts come from ci/fleet-gate in this repo via $/ (the same commit as this workflow). MIT license.
+name: fleet-gate
+on:
+  workflow_call:
+permissions:
+  contents: read
+jobs:
+  gate:
+    name: fleet-gate
+    # Headless gerdes runner: gate is PS 5.1 plus git plus gitleaks only, no GUI.
+    runs-on: [self-hosted, Windows, X64, powershell51, headless, gerdes]
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - id: gate
+        uses: $/ci/fleet-gate
+        with:
+          base-sha: ${{ github.event.pull_request.base.sha || github.event.merge_group.base_sha }}
+
+  # Browser accessibility scan on the elevated win11 runner. OFF unless the Actions variable
+  # FLEET_GATE_BROWSER is 'on' (set by an admin at org or repo level; a PR can't set it). Even
+  # then, only for PRs opened by the six team members from a branch in this repo or from a fork
+  # that the author owns. Keep the list equal to ci/fleet-gate/browser/BrowserA11y.psm1 (a Pester
+  # test checks it).
+  browser-a11y:
+    name: fleet-gate browser a11y
+    if: >-
+      vars.FLEET_GATE_BROWSER == 'on' &&
+      github.event_name == 'pull_request' &&
+      contains(fromJSON('["agathokakological","BenKenBoy","cyprionceo","nullusperfectus","seakintruth","sun-of-anton"]'), github.event.pull_request.user.login) &&
+      (github.event.pull_request.head.repo.full_name == github.repository ||
+       github.event.pull_request.head.repo.owner.login == github.event.pull_request.user.login)
+    runs-on: [self-hosted, Windows, X64, win11, interactive]
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          fetch-depth: 1
+          persist-credentials: false
+      - uses: $/ci/fleet-gate/browser
+
+  browser-a11y-skipped:
+    name: fleet-gate browser a11y (skipped)
+    if: >-
+      !(vars.FLEET_GATE_BROWSER == 'on' &&
+      github.event_name == 'pull_request' &&
+      contains(fromJSON('["agathokakological","BenKenBoy","cyprionceo","nullusperfectus","seakintruth","sun-of-anton"]'), github.event.pull_request.user.login) &&
+      (github.event.pull_request.head.repo.full_name == github.repository ||
+       github.event.pull_request.head.repo.owner.login == github.event.pull_request.user.login))
+    runs-on: [self-hosted, Windows, X64, powershell51, headless, gerdes]
+    timeout-minutes: 5
+    steps:
+      - shell: powershell
+        env:
+          FG_BROWSER: ${{ vars.FLEET_GATE_BROWSER }}
+        run: |
+          if ($env:FG_BROWSER -ne 'on') {
+            Write-Host '::notice title=fleet-gate browser a11y disabled::The browser accessibility scan is disabled pending admin settings (Actions variable FLEET_GATE_BROWSER is not on). The static contrast check in fleet-gate still ran.'
+          } else {
+            Write-Host '::notice title=fleet-gate browser a11y skipped::The browser accessibility scan runs on the team runner only for PRs by team members from this repo or their own fork. The static contrast check in fleet-gate still ran.'
+          }

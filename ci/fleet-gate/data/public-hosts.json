@@ -1,0 +1,12 @@
+{
+  "_comment": "Public hosts fleet-gate allows in https:// URLs for the mil-host (added lines) and endpoints (full repo) checks. A host matches an entry exactly or as a subdomain of it. Docs (.md/.txt/.html under docs or README) are IGNORED; anywhere else a match is a WARN, because runtime calls must still degrade gracefully offline (CANES may be disconnected). Bare hosts, http://, userinfo (user@host) and secret-looking query parameters keep the original FAIL. Every entry needs why and approvedBy.",
+  "version": 1,
+  "hosts": [
+    { "host": "navy.mil",        "why": "Public Navy news/press pages cited in docs (NAVWAR, CHIPS)", "approvedBy": "seakintruth (2026-11-04, chat request)" },
+    { "host": "doncio.navy.mil", "why": "Public DON CIO / CHIPS articles", "approvedBy": "seakintruth (2026-11-04, chat request)" },
+    { "host": "defense.gov",     "why": "Public DoD news", "approvedBy": "seakintruth (2026-11-04, chat request)" },
+    { "host": "disa.mil",        "why": "Public DISA STIG/policy pages", "approvedBy": "seakintruth (2026-11-04, chat request)" },
+    { "host": "public.cyber.mil","why": "Public STIG downloads and docs", "approvedBy": "seakintruth (2026-11-04, chat request)" }
+  ],
+  "secretQueryParams": ["token", "access_token", "api_key", "apikey", "key", "sig", "signature", "password", "pwd", "secret", "auth", "code", "x-amz-signature", "sv", "se"]
+}
