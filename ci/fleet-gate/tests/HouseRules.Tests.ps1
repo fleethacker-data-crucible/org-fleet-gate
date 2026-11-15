@@ -57,6 +57,14 @@ Describe 'Find-FgListeners' {
     @($r | Where-Object { $_.Path -eq 'src/e.ps1' }).Count | Should -Be 0
     ($r | Where-Object { $_.Path -like 'tests/*' })[0].Severity | Should -Be 'WARN'
   }
+  It 'ignores a comparison against 0.0.0.0 (netstat guard, not a bind)' {
+    $files = @{
+      'tools/fairlead-forward.mjs' = "if (host !== '127.0.0.1' && host !== '0.0.0.0' && host !== '[::1]') continue;"
+      'src/g.js' = "if (host === '0.0.0.0') { return; }"
+    }
+    $r = @(Find-FgListeners -Files $files -Patterns $rows -Allow $null)
+    @($r | Where-Object { $_.Severity -eq 'FAIL' }).Count | Should -Be 0
+  }
 }
 
 Describe 'Retired names inside identifiers' {
