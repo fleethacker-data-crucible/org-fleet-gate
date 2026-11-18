@@ -12,7 +12,7 @@ the runner, MIT license.
 | `endpoints` | whole repo | a military or service-branch host appears outside test/fixture paths |
 | `binaries` | changed files | a new file over 5 MB, an archive/model/WASM/package/executable extension, or executable magic bytes. The message says to publish them as GitHub Release assets on a vN.N.0 release |
 | `workflows` | changed workflows (safety) + all workflows (shells) | pull_request_target pwn-request checkouts, untrusted context inside `run:`; a step on a Windows runner whose shell is not `powershell` or that has no `shell:` (jobs on `ubuntu-*`/`linux` runners are skipped, so bash, sh and python are fine there; for an expression `runs-on` see [Runner OS](#runner-os)); a macOS runner |
-| `house` | repo + added lines | no MIT `LICENSE`; a retired tool name in an added line, including inside identifiers such as environment variables, function names and item names; a listener bound to anything but loopback. A second scan, `retired-name-repo`, checks every tracked text file (not `CHANGELOG.md`, `docs/reports/` or `ci/fleet-gate/data/`) and reports at the severity in `data/retired-names-repo.setting` |
+| `house` | repo + added lines | no MIT `LICENSE`; a listener bound to anything but loopback |
 | `contrast` | CSS + HTML, no browser | a text color against its resolved background is below 4.5:1 (3:1 for large text) in any theme. FAIL when the CSS, its token file or the background's file changed; pre-existing problems WARN. Unresolved pairs WARN |
 | `security` | changed paths + added code | never FAILs: WARNs "needs Researcher verdict" and sets the `needs_researcher` and `security_categories` outputs |
 
@@ -55,14 +55,6 @@ labels in `runs-on` (labels aren't case-sensitive):
 
 A trailing `# comment` on the `runs-on:` line is ignored.
 
-## Retired-name scan of the whole repo
-
-The `retired-name` check only reads lines a PR adds. `retired-name-repo` reads every tracked text file with the same patterns (`data/retired-names.tsv`) and the same allowlist, so names that are already in the code show up too.
-
-Its severity is one line in `data/retired-names-repo.setting`: `WARN` (the default) lists the hits without failing the gate, `FAIL` blocks the PR. Change it once the repos are clean. Only `FAIL`-level pattern hits are re-rated; hits in test and fixture paths stay `WARN`. Findings are listed as `house/retired-name-repo`.
-
-Retired names in identifiers are caught by the patterns that are not word-bounded (an underscore or a camel-case join next to the name). The data file brackets one letter of each pattern so it does not match itself.
-
 ## Allowlist
 
 The static contrast check resolves linked stylesheets and local CSS imports per HTML page, keeps `data-skin` variants separate, and recognizes root `.light` / `.dark` theme classes. Direct-child selectors are matched as direct children, not arbitrary descendants. Fully transparent backing text has no visible glyphs; partially transparent text is still composited and checked. Build templates with unresolved stylesheet links retain the repository CSS fallback. Unreferenced stylesheets are still scanned. These context rules do not change the 4.5:1 / 3:1 thresholds or suppress real findings.
@@ -76,7 +68,6 @@ match:^build\.internal\.   # the matched text
 line:sample-config         # the whole added line
 rule:generic-api-key       # a gitleaks rule id
 fingerprint:<gitleaks fingerprint>
-retired:^scripts/muse/    # repo path; retired-name findings only
 ```
 
 Built-in ignores: obvious fakes (example, dummy, placeholder ...) and test/fixture paths, where
@@ -94,7 +85,7 @@ visibility: private-permanent  # approved by @seakintruth 2026-11-01
 Only the repo owner approves it, for repos that will never be public. It turns the publication-only
 `sensitive` kinds (`private-ip`, and any `internal-host`, `private-path` or `personal-email` pattern) from
 FAIL into WARN with a note. Secrets and gitleaks, military hosts, handling and classification markings,
-distribution statements, `endpoints`, `workflows`, `binaries`, listeners, retired names and `security`
+distribution statements, `endpoints`, `workflows`, `binaries`, listeners and `security`
 routing are unchanged. If the setting is on and the Actions event payload says the repo is public, the
 gate FAILs (`house/policy-public`); when visibility is unknown (local runs) nothing extra happens.
 The fallback reviewer reads the same base-commit file and tells its prompt the repo is private-permanent.

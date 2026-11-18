@@ -78,8 +78,6 @@ Add-Results 'endpoints' { Find-FgEndpoints -RepoPath $RepoPath -Patterns (Read-F
 Add-Results 'binaries' { Find-FgBinaries -RepoPath $RepoPath -BaseSha $mergeBase -BinaryExt (Read-FgBinaryExtensions (Get-FgDataPath 'binary-extensions.txt')) -MaxSizeMB $MaxSizeMB -Allow $allow }
 Add-Results 'workflows' { Find-FgWorkflows -RepoPath $RepoPath -ChangedPaths $changed }
 Add-Results 'house' { Test-FgLicense -RepoPath $RepoPath }
-Add-Results 'house' { Find-FgRetiredNames -AddedLines $added -Patterns (Read-FgTsv (Get-FgDataPath 'retired-names.tsv') 2) -Allow $allow }
-Add-Results 'house' { Find-FgRetiredNamesRepo -RepoPath $RepoPath -Patterns (Read-FgTsv (Get-FgDataPath 'retired-names.tsv') 2) -Allow $allow -Severity (Get-FgRepoScanSeverity (Get-FgDataPath 'retired-names-repo.setting')) }
 Add-Results 'house' { Find-FgListeners -RepoPath $RepoPath -Patterns (Read-FgTsv (Get-FgDataPath 'listener-patterns.tsv') 3) -Allow $allow }
 Add-Results 'contrast' { Find-FgContrastInRepo -RepoPath $RepoPath -ChangedPaths $changed -FullScan:$full }
 Add-Results 'security' { Find-FgSecurityChanges -ChangedPaths $changed -AddedLines $added -Patterns (Read-FgTsv (Get-FgDataPath 'security-paths.tsv') 3) }

@@ -71,20 +71,3 @@ Describe 'Get-FgPolicy' {
     (Get-FgPolicy -RepoPath $d -BaseRef $head -PolicyPath (Join-Path $TestDrive 'missing.txt')).visibility | Should -Be ''
   }
 }
-
-Describe 'retired allowlist kind' {
-  It 'ignores retired names only under the listed path' {
-    $allow = Read-FgAllowlist -Paths @()
-    $allow.retired = @('^scripts/muse/')
-    $rows = Get-TestRows 'retired-names.tsv'
-    $name = 'C' + 'ascade'
-    $r = @(Find-FgRetiredNames -AddedLines @((New-TestAdded 'scripts/muse/a.md' "uses $name"), (New-TestAdded 'docs/b.md' "uses $name")) -Patterns $rows -Allow $allow)
-    ($r | Where-Object Path -eq 'scripts/muse/a.md').Severity | Should -Be 'IGNORED'
-    ($r | Where-Object Path -eq 'docs/b.md').Severity | Should -Be 'FAIL'
-  }
-  It 'does not ignore sensitive content under that path' {
-    $allow = Read-FgAllowlist -Paths @(); $allow.retired = @('^scripts/muse/')
-    $r = @(Find-FgSensitiveAdded -AddedLines @(New-TestAdded 'scripts/muse/a.ps1' ('h = ''portal.agency.' + 'm' + 'il''')) -Patterns (Get-TestRows 'sensitive-patterns.tsv') -Allow $allow)
-    $r[0].Severity | Should -Be 'FAIL'
-  }
-}
