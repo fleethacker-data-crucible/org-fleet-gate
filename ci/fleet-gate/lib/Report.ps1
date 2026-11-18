@@ -5,7 +5,7 @@ $script:FgChecks = [ordered]@{
   endpoints = 'No military/service-branch default endpoints (full repo)'
   binaries  = 'No large files / binaries'
   workflows = 'Workflow safety + PowerShell 5.1 shells on Windows runners'
-  house     = 'House rules (MIT LICENSE, retired names, loopback listeners)'
+  house     = 'House rules (MIT LICENSE, loopback listeners)'
   contrast  = 'Static color contrast (WCAG 2.x)'
   security  = 'Security-relevant changes (Researcher routing)'
 }
